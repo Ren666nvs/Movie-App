@@ -2,14 +2,14 @@ import Footer from "@/components/footer/Footer";
 import Header from "@/components/header/Header";
 import { SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Select } from "@radix-ui/react-select";
-import { ModeToggle } from "@/components/ModeToggle/ModeToggle";
+
 
 const Page = () => {
   return (
     <>
       <Header />
       <main>
-      <ModeToggle />
+      
       <div className="...">
         <Select>
           <SelectTrigger className="w-[180px]">
