@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { Star } from "lucide-react";
 
-const TMDB_BASE_URL = "https://api.themoviedb.org/3";
-const TMDB_IMAGE_SERVICE_URL = "https://image.tmdb.org/t/p/w500";
-const TMDB_API_TOKEN = "YOUR_API_TOKEN_HERE";
+const TMDB_BASE_URL = process.env.TMDB_BASE_URL;
+const TMDB_IMAGE_SERVICE_URL = process.env.TMDB_IMAGE_SERVICE_URL;
+const TMDB_API_TOKEN = process.env.TMDB_API_TOKEN;
 
 interface Movie {
   id: number;
@@ -26,9 +27,20 @@ const MovieSection = ({
   movies: Movie[];
   push: (path: string) => void;
 }) => {
+  const titleColor =
+    title === "Upcoming Movies"
+      ? "text-blue-400"
+      : title === "Popular Movies"
+      ? "text-red-500"
+      : "text-green-400";
+
   return (
     <div className="mb-12">
-      <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
+      <h2
+        className={`text-2xl font-bold mb-4 ${titleColor} dark:text-yellow-300`}
+      >
+        {title}
+      </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {movies.map((movie) => (
           <Card
@@ -36,9 +48,6 @@ const MovieSection = ({
             className="cursor-pointer hover:scale-105 transition"
             onClick={() => push(`/category/${movie.id}`)}
           >
-            <CardHeader className="text-lg font-semibold">
-              {movie.title}
-            </CardHeader>
             <div className="relative w-full h-64">
               {movie.poster_path && (
                 <Image
@@ -50,9 +59,15 @@ const MovieSection = ({
                 />
               )}
             </div>
-            <CardContent className="text-center text-yellow-400 font-medium">
-              Rate: {movie.vote_average.toFixed(1)}
+
+            <CardContent className="flex items-center justify-start space-x-2 text-left text-yellow-400 font-medium">
+              <Star className="text-yellow-400" />
+              <span>{movie.vote_average.toFixed(1)} / 10</span>
             </CardContent>
+
+            <CardHeader className="text-lg font-semibold text-center">
+              {movie.title}
+            </CardHeader>
           </Card>
         ))}
       </div>
@@ -99,26 +114,25 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen p-8 pb-20 sm:p-20 text-white relative">
+    <div className="min-h-screen p-8 pb-20 sm:p-20 text-black dark:text-white relative">
       {loading ? (
         <p>Loading movies...</p>
       ) : (
         <>
-          <h3 className="text-foreground text-2xl font-semibold">Upcoming</h3>
           <MovieSection
-            title="UpComingMovies"
+            title="Upcoming Movies"
             movies={upcomingMovies}
             push={push}
           />
-          <h3 className="text-foreground text-2xl font-semibold">Popular</h3>
+
           <MovieSection
-            title="PopularMovies"
+            title="Popular Movies"
             movies={popularMovies}
             push={push}
           />
-          <h3 className="text-foreground text-2xl font-semibold">Top Rated</h3>
+
           <MovieSection
-            title="TopRatedMovies"
+            title="Top Rated Movies"
             movies={topRatedMovies}
             push={push}
           />
