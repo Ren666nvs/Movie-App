@@ -8,7 +8,9 @@ import Image from "next/image";
 import { Star } from "lucide-react";
 
 const TMDB_BASE_URL = process.env.TMDB_BASE_URL;
-const TMDB_IMAGE_SERVICE_URL = process.env.TMDB_IMAGE_SERVICE_URL;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const TMDB_IMAGE_SERVICE_URL = process.env.NEXT_PUBLIC_TMDB_IMAGE_URL || "https://image.tmdb.org/t/p";
+
 const TMDB_API_TOKEN = process.env.TMDB_API_TOKEN;
 
 interface Movie {
@@ -28,16 +30,16 @@ const MovieSection = ({
   push: (path: string) => void;
 }) => {
   const titleColor =
-    title === "Upcoming Movies"
-      ? "text-bg-black"
-      : title === "Popular Movies"
-      ? "text-bg-black"
-      : "text-bg-black";
+  title === "Upcoming Movies"
+    ? "text-black"
+    : title === "Popular Movies"
+    ? "text-black"
+    : "text-black";
 
   return (
     <div className="mb-12">
       <h2
-        className={`text-2xl font-bold mb-4 ${titleColor} dark:text-bg-black`}
+        className={`text-2xl font-bold mb-4 ${titleColor} dark:text-white`}
       >
         {title}
       </h2>
@@ -50,13 +52,14 @@ const MovieSection = ({
           >
             <div className="relative w-full h-64">
               {movie.poster_path && (
-                <Image
-                  src={`${TMDB_IMAGE_SERVICE_URL}${movie.poster_path}`}
-                  alt={movie.title}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-md"
-                />
+               <Image
+               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+               alt={movie.title}
+               layout="fill"
+               objectFit="cover"
+               className="rounded-md"
+             />
+             
               )}
             </div>
 
