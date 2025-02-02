@@ -29,15 +29,15 @@ const MovieSection = ({
 }) => {
   const titleColor =
     title === "Upcoming Movies"
-      ? "text-blue-400"
+      ? "text-bg-black"
       : title === "Popular Movies"
-      ? "text-red-500"
-      : "text-green-400";
+      ? "text-bg-black"
+      : "text-bg-black";
 
   return (
     <div className="mb-12">
       <h2
-        className={`text-2xl font-bold mb-4 ${titleColor} dark:text-yellow-300`}
+        className={`text-2xl font-bold mb-4 ${titleColor} dark:text-bg-black`}
       >
         {title}
       </h2>
