@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/header/Header";
 import Footer from "@/components/footer/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
+import CarouselDemo from "@/components/CarouselDemo"; // Import CarouselDemo
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,18 +16,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-      
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
+          
+          
+          <CarouselDemo /> 
+          
           {children}
 
           <Footer />
         </ThemeProvider>
-        
       </body>
     </html>
   );
 }
-
-      
- 
