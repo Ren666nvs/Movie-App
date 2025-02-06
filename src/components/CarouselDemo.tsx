@@ -15,8 +15,8 @@ const CarouselDemo = () => {
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
-  const [movies, setMovies] = useState<any[]>([]); // TMDB-ийн кинонуудын мэдээлэл
-  const [loading, setLoading] = useState(true); // Ачааллах байдал
+  const [movies, setMovies] = useState<any[]>([]); 
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -30,7 +30,7 @@ const CarouselDemo = () => {
       } catch (err) {
         console.error("Error fetching movies:", err);
       } finally {
-        setLoading(false); // Ачааллаа дуусгах
+        setLoading(false); 
       }
     };
 
@@ -61,7 +61,7 @@ const CarouselDemo = () => {
                 className="flex w-full justify-center items-center"
               >
                 <Image
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} // TMDB-ийн зураг URL
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
                   alt={movie.title}
                   width={500}
                   height={750}
