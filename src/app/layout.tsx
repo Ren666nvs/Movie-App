@@ -5,7 +5,7 @@ import Footer from "@/components/footer/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "MovieZ",
+  title: "MovieZ ",
   description: "Movie information app powered by TMDB",
 };
 
