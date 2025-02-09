@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
-          <main className="container mx-auto px-4">{children}</main>
+          <main className="flex flex-col items-start gap-[4px] ">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>

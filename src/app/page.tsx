@@ -42,35 +42,36 @@ const MovieSection = ({
         {displayedMovies.length > 0 ? (
           displayedMovies.map((movie) => (
             <Card
-              key={movie.id}
-              className="cursor-pointer hover:scale-105 transition"
-              onClick={() => push(`/movies/${movie.id}`)}
-            >
-              <div className="relative w-full h-64">
-                {movie.poster_path ? (
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                    alt={movie.title}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-md"
-                  />
-                ) : (
-                  <div className="w-full h-64 bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400">
-                    No Image
-                  </div>
-                )}
-              </div>
-
-              <CardContent className="flex items-center justify-start space-x-2 text-left text-yellow-400 font-medium">
-                <Star className="text-yellow-400" />
-                <span>{movie.vote_average.toFixed(1)} / 10</span>
-              </CardContent>
-
-              <CardHeader className="text-lg font-semibold text-center">
-                {movie.title}
-              </CardHeader>
-            </Card>
+            key={movie.id}
+            className="cursor-pointer hover:scale-105 transition"
+            onClick={() => push(`/movies/${movie.id}`)}
+          >
+            <div className="relative w-full h-[345px]"> 
+              {movie.poster_path ? (
+                <Image
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  alt={movie.title}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-md"
+                />
+              ) : (
+                <div className="w-full h-[400px] bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400">
+                  No Image
+                </div>
+              )}
+            </div>
+          
+            <CardContent className="flex items-center justify-start space-x-2 text-left text-yellow-400 font-medium">
+              <Star className="text-yellow-400" />
+              <span>{movie.vote_average.toFixed(1)} / 10</span>
+            </CardContent>
+          
+            <CardHeader className="text-lg font-semibold text-center">
+              {movie.title}
+            </CardHeader>
+          </Card>
+          
           ))
         ) : (
           <p className="text-gray-600 dark:text-gray-400">
