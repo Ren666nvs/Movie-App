@@ -6,6 +6,7 @@ import axios from "axios";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
@@ -30,7 +31,7 @@ const MovieSection = ({
   isExpanded: boolean;
   onToggle: () => void;
 }) => {
-  const displayedMovies = isExpanded ? movies : movies.slice(0, 10); // Эхний 10 киног харуулах
+  const displayedMovies = isExpanded ? movies : movies.slice(0, 10);
 
   return (
     <div className="mb-12">
@@ -77,11 +78,16 @@ const MovieSection = ({
           </p>
         )}
       </div>
-
-      {movies.length > 10 && !isExpanded && (
-        <button onClick={onToggle} className="w-full text-center py-2 ">
-          See More
-        </button>
+      {movies.length > 10 && (
+        <div className="text-center mt-4">
+          <Button
+            variant="outline"
+            className="text-yellow-600 dark:text-yellow-400"
+            onClick={onToggle}
+          >
+            {isExpanded ? "See Less" : "See More"}
+          </Button>
+        </div>
       )}
     </div>
   );
