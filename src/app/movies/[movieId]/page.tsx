@@ -57,54 +57,62 @@ export default function MovieDetailsPage() {
       }
 
       try {
-        // 1. Киноны үндсэн мэдээлэл
-        const movieResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
-          params: { language: "en-US" },
-          headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
-        });
+        const movieResponse = await axios.get(
+          `${TMDB_BASE_URL}/movie/${movieId}`,
+          {
+            params: { language: "en-US" },
+            headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
+          }
+        );
 
-        // 2. Найруулагч, зохиолч, жүжигчдийн мэдээлэл
-        const creditsResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}/credits`, {
-          headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
-        });
+        const creditsResponse = await axios.get(
+          `${TMDB_BASE_URL}/movie/${movieId}/credits`,
+          {
+            headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
+          }
+        );
 
-        // 3. Трейлер (YouTube) мэдээлэл
-        const videosResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}/videos`, {
-          params: { language: "en-US" },
-          headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
-        });
+        const videosResponse = await axios.get(
+          `${TMDB_BASE_URL}/movie/${movieId}/videos`,
+          {
+            params: { language: "en-US" },
+            headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
+          }
+        );
 
-        // 4. Ижил төстэй кинонууд
-        const similarResponse = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}/similar`, {
-          params: { language: "en-US", page: 1 },
-          headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
-        });
+        const similarResponse = await axios.get(
+          `${TMDB_BASE_URL}/movie/${movieId}/similar`,
+          {
+            params: { language: "en-US", page: 1 },
+            headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
+          }
+        );
 
         setMovie(movieResponse.data);
 
         const crew = creditsResponse.data.crew;
         const cast = creditsResponse.data.cast;
 
-        // Найруулагч олох
-        const director = crew.find((person: any) => person.job === "Director")?.name || "Unknown";
+        const director =
+          crew.find((person: any) => person.job === "Director")?.name ||
+          "Unknown";
 
-        // Зохиолчид олох
         const writers = crew
-          .filter((person: any) => person.job === "Writer" || person.department === "Writing")
+          .filter(
+            (person: any) =>
+              person.job === "Writer" || person.department === "Writing"
+          )
           .map((writer: any) => writer.name);
 
-        // Гол 3 жүжигчнийг олох
         const stars = cast.slice(0, 3).map((actor: any) => actor.name);
 
         setCredits({ director, writers, stars });
 
-        // Трейлер авах (эхний YouTube видеог сонгоно)
         const trailerVideo = videosResponse.data.results.find(
           (video: any) => video.site === "YouTube" && video.type === "Trailer"
         );
         setTrailer(trailerVideo || null);
 
-        // Ижил төстэй кинонууд
         setSimilarMovies(similarResponse.data.results || []);
       } catch (err) {
         console.error("Error fetching movie details:", err);
@@ -123,11 +131,12 @@ export default function MovieDetailsPage() {
 
   return (
     <div className="min-h-screen p-8 relative">
-      {/* Movie Title & Rating */}
       <div className="mt-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{movie.title}</h1>
-          <p className="text-gray-600 dark:text-gray-400">{movie.release_date}</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            {movie.release_date}
+          </p>
         </div>
         <div className="flex items-center">
           <Star className="text-yellow-400" />
@@ -137,7 +146,6 @@ export default function MovieDetailsPage() {
         </div>
       </div>
 
-      {/* Movie Backdrop */}
       {movie.backdrop_path && (
         <div className="relative w-full h-64 md:h-96">
           <Image
@@ -150,30 +158,35 @@ export default function MovieDetailsPage() {
         </div>
       )}
 
-      {/* Genre List */}
       <div className="mt-4 flex flex-wrap gap-2">
         {movie.genres.map((genre) => (
-          <span key={genre.id} className="bg-gray-300 dark:bg-gray-700 px-3 py-1 rounded-full text-sm">
+          <span
+            key={genre.id}
+            className="bg-gray-300 dark:bg-gray-700 px-3 py-1 rounded-full text-sm"
+          >
             {genre.name}
           </span>
         ))}
       </div>
 
-      {/* Overview */}
       <div className="mt-4">
         <p className="text-gray-700 dark:text-gray-300">{movie.overview}</p>
       </div>
 
-      {/* Director, Writers, and Stars */}
       {credits && (
         <div className="mt-6">
-          <p><strong>Director:</strong> {credits.director}</p>
-          <p><strong>Writers:</strong> {credits.writers.join(", ")}</p>
-          <p><strong>Stars:</strong> {credits.stars.join(", ")}</p>
+          <p>
+            <strong>Director:</strong> {credits.director}
+          </p>
+          <p>
+            <strong>Writers:</strong> {credits.writers.join(", ")}
+          </p>
+          <p>
+            <strong>Stars:</strong> {credits.stars.join(", ")}
+          </p>
         </div>
       )}
 
-      {/* Movie Trailer */}
       {trailer && (
         <div className="mt-6">
           <h2 className="text-2xl font-bold mb-4">Trailer</h2>
@@ -186,8 +199,6 @@ export default function MovieDetailsPage() {
           ></iframe>
         </div>
       )}
-
-      {/* Similar Movies */}
       <div className="mt-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Similar Movies</h2>
@@ -196,24 +207,30 @@ export default function MovieDetailsPage() {
               onClick={() => setShowAllSimilar(!showAllSimilar)}
               className="text-blue-600 hover:text-blue-800"
             >
-              {showAllSimilar ? "<-See Less" : "See More->"}
+              {showAllSimilar ? "See Less" : "See More"}
             </button>
           )}
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {(showAllSimilar ? similarMovies : similarMovies.slice(0, 5)).map((movie) => (
-            <div key={movie.id} className="cursor-pointer" onClick={() => router.push(`/movies/${movie.id}`)}>
-              <Image
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={movie.title}
-                width={200}
-                height={300}
-                className="rounded-md"
-              />
-              <p className="text-center mt-2">{movie.title}</p>
-            </div>
-          ))}
+          {(showAllSimilar ? similarMovies : similarMovies.slice(0, 5)).map(
+            (movie) => (
+              <div
+                key={movie.id}
+                className="cursor-pointer"
+                onClick={() => router.push(`/movies/${movie.id}`)}
+              >
+                <Image
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  alt={movie.title}
+                  width={200}
+                  height={300}
+                  className="rounded-md"
+                />
+                <p className="text-center mt-2">{movie.title}</p>
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>

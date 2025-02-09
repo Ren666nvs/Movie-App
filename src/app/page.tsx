@@ -21,19 +21,25 @@ const MovieSection = ({
   title,
   movies,
   push,
+  isExpanded,
+  onToggle,
 }: {
   title: string;
   movies: Movie[];
   push: (path: string) => void;
+  isExpanded: boolean;
+  onToggle: () => void;
 }) => {
+  const displayedMovies = isExpanded ? movies : movies.slice(0, 10); // Эхний 10 киног харуулах
+
   return (
     <div className="mb-12">
       <h2 className="text-2xl font-bold mb-4 text-black dark:text-white">
         {title}
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {movies.length > 0 ? (
-          movies.map((movie) => (
+        {displayedMovies.length > 0 ? (
+          displayedMovies.map((movie) => (
             <Card
               key={movie.id}
               className="cursor-pointer hover:scale-105 transition"
@@ -66,9 +72,17 @@ const MovieSection = ({
             </Card>
           ))
         ) : (
-          <p className="text-gray-600 dark:text-gray-400">No movies available</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            No movies available
+          </p>
         )}
       </div>
+
+      {movies.length > 10 && !isExpanded && (
+        <button onClick={onToggle} className="w-full text-center py-2 ">
+          See More
+        </button>
+      )}
     </div>
   );
 };
@@ -80,12 +94,19 @@ export default function Home() {
   const [topRatedMovies, setTopRatedMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState({
+    popular: false,
+    upcoming: false,
+    topRated: false,
+  });
 
   useEffect(() => {
     const fetchMovies = async () => {
       if (!TMDB_BASE_URL || !TMDB_API_TOKEN) {
         console.error("Missing TMDB environment variables.");
-        setError("Missing API configuration. Please check your .env.local file.");
+        setError(
+          "Missing API configuration. Please check your .env.local file."
+        );
         setLoading(false);
         return;
       }
@@ -94,10 +115,6 @@ export default function Home() {
       setError(null);
 
       try {
-        console.log("Fetching movies...");
-        console.log("TMDB_BASE_URL:", TMDB_BASE_URL);
-        console.log("TMDB_API_TOKEN:", TMDB_API_TOKEN);
-
         const [popular, upcoming, topRated] = await Promise.all([
           axios.get(`${TMDB_BASE_URL}/movie/popular`, {
             params: { language: "en-US", page: 1 },
@@ -135,9 +152,33 @@ export default function Home() {
         <p className="text-center text-red-500">{error}</p>
       ) : (
         <>
-          <MovieSection title="Upcoming Movies" movies={upcomingMovies} push={push} />
-          <MovieSection title="Popular Movies" movies={popularMovies} push={push} />
-          <MovieSection title="Top Rated Movies" movies={topRatedMovies} push={push} />
+          <MovieSection
+            title="Upcoming Movies"
+            movies={upcomingMovies}
+            push={push}
+            isExpanded={expanded.upcoming}
+            onToggle={() =>
+              setExpanded({ ...expanded, upcoming: !expanded.upcoming })
+            }
+          />
+          <MovieSection
+            title="Popular Movies"
+            movies={popularMovies}
+            push={push}
+            isExpanded={expanded.popular}
+            onToggle={() =>
+              setExpanded({ ...expanded, popular: !expanded.popular })
+            }
+          />
+          <MovieSection
+            title="Top Rated Movies"
+            movies={topRatedMovies}
+            push={push}
+            isExpanded={expanded.topRated}
+            onToggle={() =>
+              setExpanded({ ...expanded, topRated: !expanded.topRated })
+            }
+          />
         </>
       )}
     </div>
