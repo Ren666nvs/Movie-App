@@ -148,13 +148,14 @@ export default function MovieDetailsPage() {
 
       {movie.backdrop_path && (
         <div className="relative w-full h-64 md:h-96">
-          <Image
-            src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-            alt={movie.title}
-            layout="fill"
-            objectFit="cover"
-            className="rounded-md"
-          />
+        <Image
+  src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+  alt={movie.title}
+  layout="fill" 
+  objectFit="cover" 
+  className="rounded-md"
+/>
+
         </div>
       )}
 

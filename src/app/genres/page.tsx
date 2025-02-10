@@ -1,143 +1,143 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import GenreFilter from "@/components/GenreFilter";
 import Image from "next/image";
 import { Star } from "lucide-react";
-// import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
+const TMDB_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_TMDB_IMAGE_SERVICE_URL;
 
 interface Movie {
   id: number;
   title: string;
   poster_path: string;
   vote_average: number;
-  genre_ids: number[];
 }
 
-interface Genre {
-  id: number;
-  name: string;
-}
-
-const MovieSection = ({
-  title,
-  movies,
-  push,
-}: {
-  title: string;
-  movies: Movie[];
-  push: (path: string) => void;
-}) => {
-  return (
-    <div className="mb-12">
-      <h2 className="text-2xl font-bold mb-4">{title}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {movies.length > 0 ? (
-          movies.map((movie) => (
-            <Card
-              key={movie.id}
-              className="cursor-pointer hover:scale-105 transition"
-              onClick={() => push(`/movies/${movie.id}`)}
-            >
-              <div className="relative w-full h-64">
-                {movie.poster_path ? (
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                    alt={movie.title}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-md"
-                  />
-                ) : (
-                  <div className="w-full h-64 bg-gray-300 flex items-center justify-center">
-                    No Image
-                  </div>
-                )}
-              </div>
-
-              <CardContent className="flex items-center justify-start space-x-2 text-yellow-400 font-medium">
-                <Star className="text-yellow-400" />
-                <span>{movie.vote_average.toFixed(1)} / 10</span>
-              </CardContent>
-
-              <CardHeader className="text-lg font-semibold text-center">
-                {movie.title}
-              </CardHeader>
-            </Card>
-          ))
-        ) : (
-          <p className="text-gray-600">No movies available</p>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default function Home() {
-  const { push } = useRouter();
+export default function GenresPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [genres, setGenres] = useState<Genre[]>([]);
-  const [selectedGenre, setSelectedGenre] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   useEffect(() => {
-    const fetchMoviesAndGenres = async () => {
-      if (!TMDB_BASE_URL || !TMDB_API_TOKEN) {
-        console.error("Missing TMDB environment variables.");
-        return;
-      }
-
+    const fetchMovies = async () => {
       try {
-        const [movieRes, genreRes] = await Promise.all([
-          axios.get(`${TMDB_BASE_URL}/movie/popular`, {
-            params: { language: "en-US", page: 1 },
-            headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
-          }),
-          axios.get(`${TMDB_BASE_URL}/genre/movie/list`, {
-            params: { language: "en-US" },
-            headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
-          }),
-        ]);
+        setLoading(true);
+        const genreIds = searchParams.get("genreIds") || "";
+        const pageParam = searchParams.get("page") || "1";
+        setPage(Number(pageParam));
 
-        setMovies(movieRes.data.results || []);
-        setGenres(genreRes.data.genres || []);
-      } catch (err) {
-        console.error("Error fetching movies or genres:", err);
+        const response = await axios.get(
+          `${TMDB_BASE_URL}/discover/movie?language=en-US&page=${page}&with_genres=${genreIds}`,
+          {
+            headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
+          }
+        );
+
+        setMovies(response.data.results);
+        setTotalPages(response.data.total_pages);
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchMoviesAndGenres();
-  }, []);
+    fetchMovies();
+  }, [searchParams]);
 
-  const filteredMovies = selectedGenre
-    ? movies.filter((movie) => movie.genre_ids.includes(Number(selectedGenre)))
-    : movies;
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return;
+
+    const queryParams = new URLSearchParams(searchParams.toString());
+    queryParams.set("page", newPage.toString());
+    router.push(`/genres?${queryParams.toString()}`, { scroll: false });
+  };
+
+  const renderPageNumbers = () => {
+    let pages = [];
+    if (totalPages <= 7) {
+      pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    } else {
+      if (page <= 4) {
+        pages = [1, 2, 3, 4, "...", totalPages - 1, totalPages];
+      } else if (page >= totalPages - 3) {
+        pages = [1, 2, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+      } else {
+        pages = [1, "...", page - 1, page, page + 1, "...", totalPages];
+      }
+    }
+    return pages;
+  };
 
   return (
-    <div className="min-h-screen p-8 pb-20 sm:p-20">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Movies</h1>
-        <Select onValueChange={(value) => setSelectedGenre(value)}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Select Genre" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All</SelectItem>
-            {genres.map((genre) => (
-              <SelectItem key={genre.id} value={genre.id.toString()}>
-                {genre.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Search Filter</h1>
+
+      <GenreFilter />
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
+        {loading ? (
+          <p className="text-center col-span-full">Loading movies...</p>
+        ) : (
+          movies.map((movie) => (
+            <div
+              key={movie.id}
+              className="bg-white shadow-md rounded-lg overflow-hidden"
+            >
+              <Image
+                src={`${TMDB_IMAGE_BASE_URL}/w500${movie.poster_path}`}
+                alt={movie.title}
+                width={250}
+                height={375}
+                className="object-cover"
+              />
+              <div className="p-2">
+                <h2 className="text-sm font-semibold">{movie.title}</h2>
+                <p className="text-yellow-500 text-xs flex items-center gap-1">
+                  <Star size={14} fill="yellow" stroke="yellow" />
+                  {movie.vote_average.toFixed(1)}/10
+                </p>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
-      <MovieSection title="Movies" movies={filteredMovies} push={push} />
+      <div className="flex justify-center items-center gap-2 mt-6">
+        {renderPageNumbers().map((num, index) =>
+          typeof num === "number" ? (
+            <button
+              key={index}
+              className={`px-3 py-1 border rounded-md ${
+                num === page ? "bg-blue-500 text-white font-bold" : "bg-gray-200"
+              }`}
+              onClick={() => handlePageChange(num)}
+            >
+              {num}
+            </button>
+          ) : (
+            <span key={index} className="px-3 py-1 text-gray-500">
+              {num}
+            </span>
+          )
+        )}
+
+        <button
+          className="px-4 py-2 border rounded-md disabled:opacity-50"
+          disabled={page >= totalPages}
+          onClick={() => handlePageChange(page + 1)}
+        >
+          Next &gt;
+        </button>
+      </div>
     </div>
   );
 }

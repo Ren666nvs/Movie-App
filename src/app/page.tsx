@@ -63,7 +63,7 @@ const MovieSection = ({
             </div>
           
             <CardContent className="flex items-center justify-start space-x-2 text-left text-yellow-400 font-medium">
-              <Star className="text-yellow-400" />
+              <Star size={14} fill="yellow" stroke="yellow" />
               <span>{movie.vote_average.toFixed(1)} / 10</span>
             </CardContent>
           
