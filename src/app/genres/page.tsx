@@ -85,12 +85,13 @@ export default function GenresPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
         {loading ? (
-          <p className="text-center col-span-full">Loading movies...</p>
+          <p className="text-center col-span-full">Loading...</p>
         ) : (
           movies.map((movie) => (
             <div
               key={movie.id}
               className="bg-white shadow-md rounded-lg overflow-hidden"
+             
             >
               <Image
                 src={`${TMDB_IMAGE_BASE_URL}/w500${movie.poster_path}`}
@@ -98,6 +99,7 @@ export default function GenresPage() {
                 width={250}
                 height={375}
                 className="object-cover"
+
               />
               <div className="p-2">
                 <h2 className="text-sm font-semibold">{movie.title}</h2>

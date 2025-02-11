@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 export const metadata: Metadata = {
   title: "MovieZ ",
   description: "Movie information app powered by TMDB",
+  
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -16,9 +17,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
           <main className="flex flex-col items-start gap-[4px] ">{children}</main>
+        
           <Footer />
         </ThemeProvider>
-        
+
       </body>
     </html>
   );

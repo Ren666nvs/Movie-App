@@ -7,6 +7,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import MovieCarousel from "@/components/MovieCarousel";
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
@@ -42,36 +43,35 @@ const MovieSection = ({
         {displayedMovies.length > 0 ? (
           displayedMovies.map((movie) => (
             <Card
-            key={movie.id}
-            className="cursor-pointer hover:scale-105 transition"
-            onClick={() => push(`/movies/${movie.id}`)}
-          >
-            <div className="relative w-full h-[345px]"> 
-              {movie.poster_path ? (
-                <Image
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-md"
-                />
-              ) : (
-                <div className="w-full h-[400px] bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400">
-                  No Image
-                </div>
-              )}
-            </div>
-          
-            <CardContent className="flex items-center justify-start space-x-2 text-left text-yellow-400 font-medium">
-              <Star size={14} fill="yellow" stroke="yellow" />
-              <span>{movie.vote_average.toFixed(1)} / 10</span>
-            </CardContent>
-          
-            <CardHeader className="text-lg font-semibold text-center">
-              {movie.title}
-            </CardHeader>
-          </Card>
-          
+              key={movie.id}
+              className="cursor-pointer hover:scale-105 transition"
+              onClick={() => push(`/movies/${movie.id}`)}
+            >
+              <div className="relative w-full h-[345px]">
+                {movie.poster_path ? (
+                  <Image
+                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    alt={movie.title}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-md"
+                  />
+                ) : (
+                  <div className="w-full h-[400px] bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400">
+                    No Image
+                  </div>
+                )}
+              </div>
+
+              <CardContent className="flex items-center justify-start space-x-2 text-left text-black-400 font-medium">
+                <Star size={14} fill="yellow" stroke="yellow" />
+                <span>{movie.vote_average.toFixed(1)} / 10</span>
+              </CardContent>
+
+              <CardHeader className="text-lg font-semibold text-center">
+                {movie.title}
+              </CardHeader>
+            </Card>
           ))
         ) : (
           <p className="text-gray-600 dark:text-gray-400">
@@ -81,6 +81,7 @@ const MovieSection = ({
       </div>
       {movies.length > 10 && (
         <div className="text-center mt-4">
+          
           <Button
             variant="outline"
             className="text-yellow-600 dark:text-yellow-400"
@@ -153,6 +154,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen p-8 pb-20 sm:p-20 text-black dark:text-white relative">
+      <MovieCarousel />
       {loading ? (
         <p className="text-center text-lg">Loading movies...</p>
       ) : error ? (
