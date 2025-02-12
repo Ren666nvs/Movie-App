@@ -2,35 +2,34 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Play, Star } from "lucide-react";
-
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { useRouter } from "next/navigation"; 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_IMAGE_URL = process.env.NEXT_PUBLIC_TMDB_IMAGE_SERVICE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 
-
 export default function MovieCarousel() {
   const [movies, setMovies] = useState([]);
   const [current, setCurrent] = useState(0);
+  const router = useRouter(); 
 
   useEffect(() => {
     async function fetchMovies() {
       try {
         const response = await fetch(
-          `${TMDB_BASE_URL}/movie/upcoming?language=en-US&page=1&limit=10`, 
+          `${TMDB_BASE_URL}/movie/upcoming?language=en-US&page=1&limit=10`,
           {
             headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
           }
         );
         const data = await response.json();
-        setMovies(data.results.slice(0, 10)); 
+        setMovies(data.results.slice(0, 10));
       } catch (error) {
         console.error("Error fetching movies:", error);
       }
     }
     fetchMovies();
   }, []);
-  
 
   useEffect(() => {
     if (movies.length > 0) {
@@ -61,25 +60,22 @@ export default function MovieCarousel() {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent flex items-center px-10">
             <div className="text-white max-w-lg">
-              <h2 className="text-4xl font-bold">{movie.title}</h2>
+              <h2
+                className="text-4xl font-bold cursor-pointer"
+                onClick={() => router.push(`/movies/${movie.id}`)} 
+              >
+                {movie.title}
+              </h2>
               <p className="mt-3 text-lg">{movie.overview?.substring(0, 150)}...</p>
               <p className="mt-2 flex items-center text-black-400 font-semibold">
-              <Star size={14} fill="yellow" stroke="yellow" />
-                 {movie.vote_average?.toFixed(1)}/10
+                <Star size={14} fill="yellow" stroke="yellow" />
+                {movie.vote_average?.toFixed(1)}/10
               </p>
-              {/* <a
-               
-                href={`https://www.youtube.com/embed/${movie.id}`}
-                className="mt-4 inline-flex items-center px-5 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-300 transition"
-                target="_blank"
-              >
-                <Play className="mr-2" /> Watch Trailer
-              </a> */}
             </div>
           </div>
         </div>
       ))}
- 
+
       <button
         onClick={() => setCurrent((prev) => (prev === 0 ? movies.length - 1 : prev - 1))}
         className="absolute left-5 top-1/2 transform -translate-y-1/2 bg-white/30 p-3 rounded-full hover:bg-white transition"

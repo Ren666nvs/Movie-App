@@ -51,7 +51,7 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
     fetchMovieDetails();
   }, [params.movieId]);
 
-  if (loading) return <p className="text-center text-lg">Кино мэдээлэл ачааллаж байна...</p>;
+  if (loading) return <p className="text-center text-lg">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
@@ -77,19 +77,19 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
             <div>
               <p className="text-lg">{movie.overview}</p>
               <p className="mt-4">
-                <strong>Нээлтийн огноо:</strong> {movie.release_date}
+                <strong>date:</strong> {movie.release_date}
               </p>
               <p>
-                <strong>Үнэлгээ:</strong> {movie.vote_average.toFixed(1)} / 10
+                <strong>rate:</strong> {movie.vote_average.toFixed(1)} / 10
               </p>
               <p>
-                <strong>Жанр:</strong> {movie.genres.map((g) => g.name).join(", ")}
+                <strong>genre:</strong> {movie.genres.map((g) => g.name).join(", ")}
               </p>
               <button
                 className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg"
                 onClick={() => push("/")}
               >
-                Буцах
+                back
               </button>
             </div>
           </div>
