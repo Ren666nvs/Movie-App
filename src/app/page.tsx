@@ -8,7 +8,7 @@ import Image from "next/image";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MovieCarousel from "@/components/MovieCarousel";
-
+import HomeSkeleton from "@/components/HomeSkeleton";
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 
@@ -81,7 +81,6 @@ const MovieSection = ({
       </div>
       {movies.length > 10 && (
         <div className="text-center mt-4">
-          
           <Button
             variant="outline"
             className="text-yellow-600 dark:text-yellow-400"
@@ -121,6 +120,12 @@ export default function Home() {
 
       setLoading(true);
       setError(null);
+      if (loading) {
+        <HomeSkeleton />;
+      }
+      if (error) {
+        <div> Error occured</div>;
+      }
 
       try {
         const [popular, upcoming, topRated] = await Promise.all([

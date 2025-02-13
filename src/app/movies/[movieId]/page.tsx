@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 import { Star } from "lucide-react";
-
+import HomeSkeleton from "@/components/HomeSkeleton";
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 
@@ -55,7 +55,12 @@ export default function MovieDetailsPage() {
         setLoading(false);
         return;
       }
-
+      if (loading) {
+        <HomeSkeleton />;
+      }
+      if (error) {
+        <div>Error</div>;
+      }
       try {
         const movieResponse = await axios.get(
           `${TMDB_BASE_URL}/movie/${movieId}`,
@@ -148,14 +153,13 @@ export default function MovieDetailsPage() {
 
       {movie.backdrop_path && (
         <div className="relative w-full h-64 md:h-96">
-        <Image
-  src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-  alt={movie.title}
-  layout="fill" 
-  objectFit="cover" 
-  className="rounded-md"
-/>
-
+          <Image
+            src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+            alt={movie.title}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-md"
+          />
         </div>
       )}
 
