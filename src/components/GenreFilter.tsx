@@ -71,7 +71,7 @@ export default function GenreFilter() {
             className="cursor-pointer"
             onClick={() => handleGenreChange(genre.id)}
           >
-            {genre.name} {selectedGenres.includes(genre.id)}
+            {genre.name}
           </Badge>
         ))}
       </div>

@@ -27,6 +27,15 @@ const Header = () => {
 
   useEffect(() => {
     const fetchGenres = async () => {
+      console.log("Fetching genres...");
+      console.log("TMDB_BASE_URL:", TMDB_BASE_URL);
+      console.log("TMDB_API_TOKEN exists:", Boolean(TMDB_API_TOKEN));
+
+      if (!TMDB_BASE_URL || !TMDB_API_TOKEN) {
+        console.error("Error: Missing environment variables!");
+        return;
+      }
+
       try {
         const response = await axios.get(`${TMDB_BASE_URL}/genre/movie/list?language=en-US`, {
           headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
@@ -58,7 +67,10 @@ const Header = () => {
   return (
     <div className="px-6 py-4 bg-white shadow-md dark:bg-gray-900 flex items-center justify-between rounded-xl">
       {/* Logo */}
-      <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 cursor-pointer" onClick={() => push("/")}>
+      <div
+        className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 cursor-pointer"
+        onClick={() => push("/")}
+      >
         <Clapperboard className="w-6 h-6" />
         <p className="text-xl font-bold">Movie Z</p>
       </div>
@@ -68,20 +80,29 @@ const Header = () => {
         {/* Genre Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="px-4 py-2 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Button
+              variant="outline"
+              className="px-4 py-2 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
               Genres
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-            {genres.map((genre) => (
-              <DropdownMenuItem 
-                key={genre.id} 
-                onClick={() => handleGenreSelect(genre.id)}
-                className="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-              >
-                {genre.name}
+            {genres.length > 0 ? (
+              genres.map((genre) => (
+                <DropdownMenuItem
+                  key={genre.id}
+                  onClick={() => handleGenreSelect(genre.id)}
+                  className="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                >
+                  {genre.name}
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem className="px-4 py-2 text-gray-500">
+                No genres available
               </DropdownMenuItem>
-            ))}
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
 

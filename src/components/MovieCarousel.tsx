@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_IMAGE_URL = process.env.NEXT_PUBLIC_TMDB_IMAGE_SERVICE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
@@ -62,7 +63,7 @@ export default function MovieCarousel() {
         <Link href={`/movies/${movie.id}`} key={movie.id}>
           <div
             className={`absolute inset-0 transition-opacity duration-700 ${
-              index === current ? "opacity-100" : "opacity-0"
+              index === current ? "opacity-100" : "opacity-0 hidden"
             }`}
           >
             <Image
@@ -77,7 +78,7 @@ export default function MovieCarousel() {
               <div className="text-white max-w-lg">
                 <h2
                   className="text-4xl font-bold cursor-pointer"
-                  onClick={() => router.push(`/movies/${movie.id}`)}
+                  onClick={() => router.push(`/movies/upcoming/${movie.id}`)}
                 >
                   {movie.title}
                 </h2>
@@ -85,7 +86,12 @@ export default function MovieCarousel() {
                   {movie.overview?.substring(0, 150)}...
                 </p>
                 <p className="mt-2 flex items-center text-gray-400 font-semibold">
-                  <Star size={14} fill="yellow" stroke="yellow" className="mr-1" />
+                  <Star
+                    size={14}
+                    fill="yellow"
+                    stroke="yellow"
+                    className="mr-1"
+                  />
                   {movie.vote_average?.toFixed(1)}/10
                 </p>
               </div>

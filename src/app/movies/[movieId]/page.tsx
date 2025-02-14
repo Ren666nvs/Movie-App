@@ -99,22 +99,22 @@ export default function MovieDetailsPage() {
         const cast = creditsResponse.data.cast;
 
         const director =
-          crew.find((person: any) => person.job === "Director")?.name ||
+          crew.find((person: unknown) => person.job === "Director")?.name ||
           "Unknown";
 
         const writers = crew
-          .filter(
-            (person: any) =>
+          ?.filter(
+            (person: unknown) =>
               person.job === "Writer" || person.department === "Writing"
           )
-          .map((writer: any) => writer.name);
+          .map((writer: unknown) => writer.name);
 
-        const stars = cast.slice(0, 3).map((actor: any) => actor.name);
+        const stars = cast.slice(0, 3).map((actor: unknown) => actor.name);
 
         setCredits({ director, writers, stars });
 
         const trailerVideo = videosResponse.data.results.find(
-          (video: any) => video.site === "YouTube" && video.type === "Trailer"
+          (video: unknown) => video.site === "YouTube" && video.type === "Trailer"
         );
         setTrailer(trailerVideo || null);
 

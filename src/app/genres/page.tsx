@@ -6,6 +6,7 @@ import axios from "axios";
 import GenreFilter from "@/components/GenreFilter";
 import Image from "next/image";
 import { Star } from "lucide-react";
+import Link from "next/link";
 
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
@@ -14,9 +15,10 @@ const TMDB_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_TMDB_IMAGE_SERVICE_URL;
 interface Movie {
   id: number;
   title: string;
-  poster_path: string;
+  backdrop_path: string;
+  overview: string;
   vote_average: number;
-}
+};
 
 export default function GenresPage() {
   const searchParams = useSearchParams();
@@ -80,35 +82,30 @@ export default function GenresPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Search Filter</h1>
-
       <GenreFilter />
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
         {loading ? (
           <p className="text-center col-span-full">Loading...</p>
         ) : (
           movies.map((movie) => (
-            <div
-              key={movie.id}
-              className="bg-white shadow-md rounded-lg overflow-hidden"
-             
-            >
-              <Image
-                src={`${TMDB_IMAGE_BASE_URL}/w500${movie.poster_path}`}
-                alt={movie.title}
-                width={250}
-                height={375}
-                className="object-cover"
-
-              />
-              <div className="p-2">
-                <h2 className="text-sm font-semibold">{movie.title}</h2>
-                <p className="text-yellow-500 text-xs flex items-center gap-1">
-                  <Star size={14} fill="yellow" stroke="yellow" />
-                  {movie.vote_average.toFixed(1)}/10
-                </p>
+            <Link href={`/movies/${movie.id}`} key={movie.id}>
+              <div className="bg-white shadow-lg rounded-xl overflow-hidden transform transition duration-300 hover:scale-105">
+                <Image
+                  src={`${TMDB_IMAGE_BASE_URL}/w780${movie.backdrop_path}`}
+                  alt={movie.title}
+                  width={320}
+                  height={180}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h2 className="text-lg font-semibold truncate">{movie.title}</h2>
+                  <p className="text-yellow-500 text-sm flex items-center gap-1 mt-1">
+                    <Star size={16} fill="yellow" stroke="yellow" />
+                    {movie.vote_average.toFixed(1)}/10
+                  </p>
+                </div>
               </div>
-            </div>
+            </Link>
           ))
         )}
       </div>
@@ -118,22 +115,22 @@ export default function GenresPage() {
           typeof num === "number" ? (
             <button
               key={index}
-              className={`px-3 py-1 border rounded-md ${
-                num === page ? "bg-blue-500 text-white font-bold" : "bg-gray-200"
+              className={`px-4 py-2 border rounded-lg text-sm font-medium transition duration-300 ${
+                num === page ? "bg-blue-500 text-white" : "bg-gray-200 hover:bg-gray-300"
               }`}
               onClick={() => handlePageChange(num)}
             >
               {num}
             </button>
           ) : (
-            <span key={index} className="px-3 py-1 text-gray-500">
+            <span key={index} className="px-4 py-2 text-gray-500 text-sm">
               {num}
             </span>
           )
         )}
 
         <button
-          className="px-4 py-2 border rounded-md disabled:opacity-50"
+          className="px-5 py-2 border rounded-lg text-sm font-medium bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
           disabled={page >= totalPages}
           onClick={() => handlePageChange(page + 1)}
         >
