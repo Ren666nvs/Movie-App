@@ -21,6 +21,7 @@ export default function SearchResultsPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [target, toFixed]
 
   useEffect(() => {
     if (!query) return;
