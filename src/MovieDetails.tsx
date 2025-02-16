@@ -8,15 +8,7 @@ import Image from "next/image";
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 
-interface MovieDetails {
-  id: number;
-  title: string;
-  overview: string;
-  poster_path: string;
-  release_date: string;
-  vote_average: number;
-  genres: { id: number; name: string }[];
-}
+
 
 export default function MovieDetailsPage({ params }: { params: { movieId: string } }) {
   const { push } = useRouter();
