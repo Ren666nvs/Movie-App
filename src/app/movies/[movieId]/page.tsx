@@ -6,6 +6,7 @@ import axios from "axios";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import HomeSkeleton from "@/components/HomeSkeleton";
+
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 
@@ -26,6 +27,12 @@ interface MovieCredits {
   stars: string[];
 }
 
+interface Video {
+  site: string;
+  type: string;
+  key: string;
+}
+
 interface MovieTrailer {
   key: string;
 }
@@ -36,9 +43,20 @@ interface SimilarMovie {
   poster_path: string;
 }
 
+interface CrewMember {
+  job: string;
+  name: string;
+  department: string;
+}
+
+interface CastMember {
+  name: string;
+}
+
 export default function MovieDetailsPage() {
   const { movieId } = useParams();
   const router = useRouter();
+
   const [movie, setMovie] = useState<MovieDetails | null>(null);
   const [credits, setCredits] = useState<MovieCredits | null>(null);
   const [trailer, setTrailer] = useState<MovieTrailer | null>(null);
@@ -50,34 +68,25 @@ export default function MovieDetailsPage() {
   useEffect(() => {
     const fetchMovieDetails = async () => {
       if (!TMDB_BASE_URL || !TMDB_API_TOKEN || !movieId) {
-        console.error("Missing TMDB environment variables or movieId.");
-        setError("Error");
+        setError("Missing environment variables or movie ID.");
         setLoading(false);
         return;
       }
-      if (loading) {
-        <HomeSkeleton />;
-      }
-      if (error) {
-        <div>Error</div>;
-      }
-      try {
-        const movieResponse = await axios.get(
-          `${TMDB_BASE_URL}/movie/${movieId}`,
-          {
-            params: { language: "en-US" },
-            headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
-          }
-        );
 
-        const creditsResponse = await axios.get(
+      try {
+        const movieRes = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
+          params: { language: "en-US" },
+          headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
+        });
+
+        const creditsRes = await axios.get(
           `${TMDB_BASE_URL}/movie/${movieId}/credits`,
           {
             headers: { Authorization: `Bearer ${TMDB_API_TOKEN}` },
           }
         );
 
-        const videosResponse = await axios.get(
+        const videosRes = await axios.get(
           `${TMDB_BASE_URL}/movie/${movieId}/videos`,
           {
             params: { language: "en-US" },
@@ -85,7 +94,7 @@ export default function MovieDetailsPage() {
           }
         );
 
-        const similarResponse = await axios.get(
+        const similarRes = await axios.get(
           `${TMDB_BASE_URL}/movie/${movieId}/similar`,
           {
             params: { language: "en-US", page: 1 },
@@ -93,35 +102,34 @@ export default function MovieDetailsPage() {
           }
         );
 
-        setMovie(movieResponse.data);
+        setMovie(movieRes.data);
 
-        const crew = creditsResponse.data.crew;
-        const cast = creditsResponse.data.cast;
+        const crew = creditsRes.data.crew as CrewMember[];
+        const cast = creditsRes.data.cast as CastMember[];
 
         const director =
-          crew.find((person: unknown) => person.job === "Director")?.name ||
-          "Unknown";
+          crew.find((p) => p.job === "Director")?.name || "Unknown";
 
         const writers = crew
-          ?.filter(
-            (person: unknown) =>
-              person.job === "Writer" || person.department === "Writing"
+          .filter(
+            (p) => p.job === "Writer" || p.department === "Writing"
           )
-          .map((writer: unknown) => writer.name);
+          .map((writer) => writer.name);
 
-        const stars = cast.slice(0, 3).map((actor: unknown) => actor.name);
+        const stars = cast.slice(0, 3).map((actor) => actor.name);
 
         setCredits({ director, writers, stars });
 
-        const trailerVideo = videosResponse.data.results.find(
-          (video: unknown) => video.site === "YouTube" && video.type === "Trailer"
+        const trailerVideo = videosRes.data.results.find(
+          (video: Video) => video.site === "YouTube" && video.type === "Trailer"
         );
+
         setTrailer(trailerVideo || null);
 
-        setSimilarMovies(similarResponse.data.results || []);
+        setSimilarMovies(similarRes.data.results || []);
       } catch (err) {
-        console.error("Error fetching movie details:", err);
-        setError("Error loading movie details.");
+        console.error(err);
+        setError("Failed to load movie details.");
       } finally {
         setLoading(false);
       }
@@ -130,9 +138,9 @@ export default function MovieDetailsPage() {
     fetchMovieDetails();
   }, [movieId]);
 
-  if (loading) return <p className="text-center text-lg">Loading...</p>;
+  if (loading) return <HomeSkeleton />;
   if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (!movie) return <p className="text-center">Error</p>;
+  if (!movie) return <p className="text-center">Movie not found.</p>;
 
   return (
     <div className="min-h-screen p-8 relative">
@@ -152,7 +160,7 @@ export default function MovieDetailsPage() {
       </div>
 
       {movie.backdrop_path && (
-        <div className="relative w-full h-64 md:h-96">
+        <div className="relative w-full h-64 md:h-96 mt-4">
           <Image
             src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
             alt={movie.title}
@@ -179,7 +187,7 @@ export default function MovieDetailsPage() {
       </div>
 
       {credits && (
-        <div className="mt-6">
+        <div className="mt-6 space-y-1">
           <p>
             <strong>Director:</strong> {credits.director}
           </p>
@@ -192,7 +200,7 @@ export default function MovieDetailsPage() {
         </div>
       )}
 
-      {trailer && (
+      {trailer ? (
         <div className="mt-6">
           <h2 className="text-2xl font-bold mb-4">Trailer</h2>
           <iframe
@@ -201,9 +209,14 @@ export default function MovieDetailsPage() {
             src={`https://www.youtube.com/embed/${trailer.key}`}
             title="Movie Trailer"
             allowFullScreen
-          ></iframe>
+          />
+        </div>
+      ) : (
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold mb-4">No Trailer Available</h2>
         </div>
       )}
+
       <div className="mt-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Similar Movies</h2>
@@ -217,7 +230,7 @@ export default function MovieDetailsPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4">
           {(showAllSimilar ? similarMovies : similarMovies.slice(0, 5)).map(
             (movie) => (
               <div
@@ -226,7 +239,11 @@ export default function MovieDetailsPage() {
                 onClick={() => router.push(`/movies/${movie.id}`)}
               >
                 <Image
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  src={
+                    movie.poster_path
+                      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                      : "/fallback-image.jpg" 
+                  }
                   alt={movie.title}
                   width={200}
                   height={300}

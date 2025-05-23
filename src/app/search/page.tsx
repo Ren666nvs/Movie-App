@@ -1,4 +1,5 @@
 "use client";
+
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -24,7 +25,7 @@ export default function SearchResultsPage() {
 
   useEffect(() => {
     if (!query) return;
-    
+
     const fetchMovies = async () => {
       setLoading(true);
       try {
@@ -52,10 +53,14 @@ export default function SearchResultsPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Search Results for "{query}"</h1>
+      <h1 className="text-2xl font-bold mb-4">{`Search Results for "${query}"`}</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {movies.map((movie) => (
-          <div key={movie.id} className="cursor-pointer" onClick={() => router.push(`/movies/${movie.id}`)}>
+          <div
+            key={movie.id}
+            className="cursor-pointer"
+            onClick={() => router.push(`/movies/${movie.id}`)}
+          >
             <Image
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title}

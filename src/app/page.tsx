@@ -9,6 +9,7 @@ import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MovieCarousel from "@/components/MovieCarousel";
 import HomeSkeleton from "@/components/HomeSkeleton";
+
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 
@@ -57,7 +58,7 @@ const MovieSection = ({
                     className="rounded-md"
                   />
                 ) : (
-                  <div className="w-full h-[400px] bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400">
+                  <div className="w-full h-[345px] bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400">
                     No Image
                   </div>
                 )}
@@ -118,15 +119,6 @@ export default function Home() {
         return;
       }
 
-      setLoading(true);
-      setError(null);
-      if (loading) {
-        <HomeSkeleton />;
-      }
-      if (error) {
-        <div> Error occured</div>;
-      }
-
       try {
         const [popular, upcoming, topRated] = await Promise.all([
           axios.get(`${TMDB_BASE_URL}/movie/popular`, {
@@ -161,7 +153,7 @@ export default function Home() {
     <div className="min-h-screen p-8 pb-20 sm:p-20 text-black dark:text-white relative">
       <MovieCarousel />
       {loading ? (
-        <p className="text-center text-lg">Loading movies...</p>
+        <HomeSkeleton />
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
       ) : (

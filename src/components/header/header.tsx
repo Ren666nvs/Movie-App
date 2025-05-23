@@ -66,14 +66,11 @@ const Header = () => {
 
   return (
     <div className="px-6 py-4 bg-white shadow-md dark:bg-gray-900 flex items-center justify-between rounded-xl">
-      {/* Logo */}
-      <div
-        className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 cursor-pointer"
-        onClick={() => push("/")}
-      >
-        <Clapperboard className="w-6 h-6" />
-        <p className="text-xl font-bold">Movie Z</p>
-      </div>
+    {/* Logo */}
+    <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 cursor-pointer" onClick={() => push("/")}>
+      <Clapperboard className="w-6 h-6" />
+      <p className="text-xl font-bold">Movie Z</p>
+    </div>
 
       {/* Search & Genre Dropdown */}
       <div className="flex items-center gap-4">
@@ -93,7 +90,7 @@ const Header = () => {
                 <DropdownMenuItem
                   key={genre.id}
                   onClick={() => handleGenreSelect(genre.id)}
-                  className="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                  className="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
                 >
                   {genre.name}
                 </DropdownMenuItem>
@@ -105,7 +102,8 @@ const Header = () => {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-
+  
+        {/* Search Bar */}
         <form onSubmit={handleSearchSubmit} className="relative w-64">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
           <input
@@ -116,11 +114,11 @@ const Header = () => {
             onChange={handleSearchChange}
           />
         </form>
-
+  
+        {/* Dark Mode Toggle */}
         <ModeToggle />
       </div>
     </div>
   );
-};
-
+}  
 export default Header;
