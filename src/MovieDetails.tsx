@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -8,7 +6,19 @@ import Image from "next/image";
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
 
+type Genre = {
+  id: number;
+  name: string;
+};
 
+type MovieDetails = {
+  title: string;
+  overview: string;
+  release_date: string;
+  vote_average: number;
+  poster_path: string | null;
+  genres: Genre[];
+};
 
 export default function MovieDetailsPage({ params }: { params: { movieId: string } }) {
   const { push } = useRouter();
@@ -20,7 +30,7 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
     const fetchMovieDetails = async () => {
       if (!TMDB_BASE_URL || !TMDB_API_TOKEN) {
         console.error("Missing TMDB API configuration.");
-        setError("API тохиргоо дутуу байна.");
+        setError("API configuration is missing.");
         setLoading(false);
         return;
       }
@@ -34,7 +44,7 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
         setMovie(response.data);
       } catch (err) {
         console.error("Error fetching movie details:", err);
-        setError("Киноны мэдээлэл ачааллахад алдаа гарлаа.");
+        setError("There was an error loading movie details.");
       } finally {
         setLoading(false);
       }
