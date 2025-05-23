@@ -5,17 +5,10 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 
-interface MovieDetails {
-  title: string;
-  poster_path: string;
-  overview: string;
-  release_date: string;
-  vote_average: number;
-  genres: { name: string }[];
-}
-
 const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const TMDB_API_TOKEN = process.env.NEXT_PUBLIC_TMDB_API_TOKEN;
+
+
 
 export default function MovieDetailsPage({ params }: { params: { movieId: string } }) {
   const { push } = useRouter();
@@ -41,7 +34,7 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
         setMovie(response.data);
       } catch (err) {
         console.error("Error fetching movie details:", err);
-        setError("Error fetching movie details.");
+        setError("Киноны мэдээлэл ачааллахад алдаа гарлаа.");
       } finally {
         setLoading(false);
       }

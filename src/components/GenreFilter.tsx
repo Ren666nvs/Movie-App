@@ -60,9 +60,13 @@ export default function GenreFilter() {
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-md w-full">
-      <h2 className="text-lg font-semibold mb-2">Genres</h2>
-      <p className="text-sm text-black mb-4">See lists of movies by genre</p>
+    <div className="p-4 bg-white dark:bg-gray-900 shadow-md dark:shadow-lg rounded-md w-full">
+      <h2 className="text-lg font-semibold mb-2 text-black dark:text-white">
+        Genres
+      </h2>
+      <p className="text-sm text-black dark:text-gray-300 mb-4">
+        See lists of movies by genre
+      </p>
       <div className="flex flex-wrap gap-2">
         {genres.map((genre) => (
           <Badge
@@ -77,4 +81,6 @@ export default function GenreFilter() {
       </div>
     </div>
   );
+  
 }
+  
